@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reportes - Sistema de Inventario</title>
+  <link rel="stylesheet" href="proyecto.css">
+
+  <!-- Librerías para exportar PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo-nav">
+      <img src="img/LOGO.png" alt="Logo" class="logo-small">
+      <h1>Sistema de Inventario - IES “Simón Bolívar”</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="proyecto.html">Inicio</a></li>
+        <li><a href="inventario.html">Inventario</a></li>
+        <li><a class="active" href="reportes.html">Reportes</a></li>
+        <li><a href="#" id="cerrarSesion">Cerrar Sesión</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container mt-5">
+    <div class="card shadow-sm p-4">
+      <h3 class="text-center text-primary mb-4">📊 Reporte General de Inventario</h3>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="tablaReporte">
+          <thead class="table-dark">
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Cantidad</th>
+              <th>Ubicación</th>
+              <th>Fecha Registro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Los datos se cargarán dinámicamente desde localStorage -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-center mt-4">
+        <button class="btn btn-danger" id="btnPDF">
+          🧾 Generar PDF
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    © 2025 Instituto de Educación Superior Tecnológico Público Simón Bolívar
+  </footer>
+
+ <!-- Librerías necesarias para generar PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<!-- Tu archivo de lógica -->
+<script src="proyecto.js"></script>
+</body>
+</html>

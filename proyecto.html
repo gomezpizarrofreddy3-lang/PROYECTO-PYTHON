@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SMARTINVENTORY - Panel</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <link rel="stylesheet" href="proyecto.css" />
+</head>
+<body>
+  <header class="header">
+    <img src="img/LOGO.png" alt="Logo" class="header-logo" />
+    <h1>SMARTINVENTORY — Sistema de Inventario</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#inicio" class="activo"><i class="fa-solid fa-house"></i> Inicio</a></li>
+      <li><a href="#inventario"><i class="fa-solid fa-boxes-stacked"></i> Inventario</a></li>
+      <li><a href="#reportes"><i class="fa-solid fa-chart-column"></i> Reportes</a></li>
+      <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="inicio">
+      <div class="flyer">
+        <div class="flyer-left">
+          <img src="img/LOGO.png" alt="S logo" class="flyer-img" />
+        </div>
+        <div class="flyer-right">
+          <h2>SMARTINVENTORY</h2>
+
+          <ul class="flyer-features">
+            <li><i class="fa-solid fa-qrcode"></i> Escáner QR/Barras: Registro automático e instantáneo (simulación incluida).</li>
+            <li><i class="fa-solid fa-bell"></i> Alertas Automáticas: Notificaciones por Email cuando el stock está bajo.</li>
+            <li><i class="fa-solid fa-file-export"></i> Reportes al instante: Generación automática de Excel / PDF.</li>
+          </ul>
+
+          <p class="flyer-call">"¡Dile adiós a los errores humanos! Optimiza el <strong>90%</strong> del tiempo de gestión de recursos."</p>
+        </div>
+      </div>
+
+      <div class="resumen">
+        <div class="card"><i class="fa-solid fa-box"></i><br>Total Artículos<br><strong id="totalArticulos">0</strong></div>
+        <div class="card"><i class="fa-solid fa-gear"></i><br>Operativos<br><strong id="totalOperativos">0</strong></div>
+        <div class="card"><i class="fa-solid fa-triangle-exclamation"></i><br>Inoperativos<br><strong id="totalInoperativos">0</strong></div>
+      </div>
+
+      <div class="grafico-area">
+        <canvas id="graficoInicio" width="600" height="220"></canvas>
+      </div>
+    </section>
+
+    <section id="inventario" style="display:none;">
+      <h3>Gestión de Inventario</h3>
+
+      <div class="inventario-actions">
+        <input type="text" id="buscador" placeholder="🔍 Buscar artículo...">
+        <div class="inventario-buttons">
+          <button id="btnScan" class="btn small"><i class="fa-solid fa-qrcode"></i> Simular Escaneo</button>
+          <button id="btnExportCSV" class="btn small"><i class="fa-solid fa-file-csv"></i> Exportar Excel (CSV)</button>
+          <button id="btnPDF" class="btn small" title="Exportar reporte actual"><i class="fa-solid fa-file-pdf"></i> Generar PDF</button>
+        </div>
+      </div>
+
+      <form id="inventoryForm" class="inventory-form">
+        <input type="text" id="codigo" name="codigo" placeholder="Código" readonly />
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre del artículo" />
+        <input type="number" id="stock" name="stock" placeholder="Stock disponible" min="0" value="0" />
+
+        <select id="categoria" name="categoria">
+          <option value="">Selecciona Categorias</option>
+          <option value="Equipo Electrónico">Equipo Electrónico</option>
+          <option value="Mueble">Componentes y Accesorios</option>
+          <option value="Herramienta">Herramienta</option>
+          <option value="Material de Oficina">Material de Oficina</option>
+        </select>
+
+        <select id="estado" name="estado">
+          <option value="">Seleccione Estado</option>
+          <option value="Operativo">Operativo</option>
+          <option value="Inoperativo">Inoperativo</option>
+        </select>
+
+        <input type="text" id="ubicacion" name="ubicacion" placeholder="Ubicación" />
+        <input type="text" id="encargado" name="encargado" placeholder="Encargado" />
+        <button type="submit" id="agregarBtn" class="btn">Guardar</button>
+      </form>
+
+      <table id="tablaInventario">
+        <thead>
+          <tr>
+            <th>Código</th><th>Artículo</th><th>Stock</th><th>Categoría</th><th>Estado</th>
+            <th>Ubicación</th><th>Encargado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="reportes" style="display:none;">
+      <h3>Reporte General</h3>
+      <table id="tablaReporte">
+        <thead>
+          <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Estado</th><th>Ubicación</th><th>Encargado</th><th>Stock</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div style="margin-top:12px;">
+        <button id="btnExportCSVReport" class="btn"><i class="fa-solid fa-file-csv"></i> Exportar Excel (CSV)</button>
+        <button id="btnPDFReport" class="btn"><i class="fa-solid fa-file-pdf"></i> Generar PDF</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year"></span> SMARTINVENTORY — IES “Simón Bolívar”</p>
+  </footer>
+
+  <!-- 🔥 EMAILJS: Cargar librería e inicializar con tu Public Key -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("C9TZMy-tdOXIeXmqb");
+  </script>
+
+  <!-- Tu archivo JS principal -->
+  <script src="proyecto.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+/* ===================================================
+   ESTILOS GENERALES
+=================================================== */
+* { box-sizing: border-box; font-family: "Poppins", sans-serif; margin:0; padding:0; }
+body { background-color:#0f1724; color:#f1f5f9; }
+
+/* LOGIN (mantén el estilo anterior si prefieres) */
+.login-body { background: linear-gradient(135deg,#003366 0%,#0074d9 100%); height:100vh; display:flex; align-items:center; justify-content:center; }
+.login-container { background:#fff; color:#003366; padding:2rem 3rem; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.35); }
+.login-container .logo{ width:100px; margin-bottom:8px; }
+
+/* PANEL */
+.header { display:flex; align-items:center; gap:1rem; justify-content:center; background:#071033; padding:18px; }
+.header-logo { width:64px; }
+nav { background:#071a3a; }
+nav ul { display:flex; justify-content:center; gap:6px; list-style:none; padding:8px 12px; margin:0; flex-wrap:wrap; }
+nav a { color:#fff; text-decoration:none; padding:10px 14px; border-radius:6px; display:inline-block; }
+nav a.activo, nav a:hover { background:#0b4ea2; transform:translateY(-2px); }
+
+/* FLYER / PRESENTACIÓN (inicio) */
+.flyer { display:flex; gap:18px; background: linear-gradient(180deg,#08102a 0%, #0b1330 100%); padding:18px; border-radius:12px; box-shadow: 0 8px 30px rgba(2,6,23,.6); margin-bottom:18px; }
+.flyer-left { flex:0 0 160px; display:flex; align-items:center; justify-content:center; border:2px solid #7c4dff; padding:6px; border-radius:8px;}
+.flyer-img { width:140px; }
+.flyer-right { flex:1; padding:6px 8px; }
+.flyer-right h2 { margin:0; color:#fff; font-size:28px; letter-spacing:1px; }
+.flyer-right h4 { margin:8px 0; color:#8ab4ff; font-weight:600; }
+.flyer-desc { color:#d6e5ff; margin:8px 0 12px 0; line-height:1.4; }
+.flyer-features { list-style:none; padding-left:0; color:#e6f2ff; }
+.flyer-features li { margin:8px 0; display:flex; gap:8px; align-items:flex-start; }
+.flyer-features i { color:#ffd166; width:20px; }
+
+.flyer-call { margin-top:12px; color:#ffd; font-weight:600; }
+.flyer-event { margin-top:8px; color:#a9d2ff; font-style:italic; }
+
+main { padding:18px; max-width:1100px; margin:18px auto; }
+.resumen { display:flex; gap:12px; flex-wrap:wrap; margin:12px 0; }
+.card { background:#07132a; color:#dbeafe; padding:12px; border-radius:10px; min-width:160px; text-align:center; box-shadow:0 6px 18px rgba(2,6,23,.6); }
+.card i { font-size:22px; color:#66b2ff; }
+
+.inventario-actions { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:10px; }
+#buscador { flex:1; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:#081025; color:#dbeafe; }
+.inventario-buttons { display:flex; gap:8px; }
+.btn.small { padding:6px 10px; font-size:14px; }
+
+.inventory-form { display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:12px 0 18px 0; }
+.inventory-form input, .inventory-form select { padding:8px; border-radius:8px; background:#071025; color:#e6f2ff; border:1px solid rgba(255,255,255,0.04); }
+
+table { width:100%; border-collapse:collapse; margin-top:8px; background:transparent; color:#e6f2ff; }
+th, td { padding:10px; border-bottom:1px solid rgba(255,255,255,0.04); text-align:center; }
+th { background:#071033; color:#9fc5ff; position:sticky; top:0; }
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+.btnAccion { padding:6px 8px; border-radius:8px; border:none; cursor:pointer; color:#fff; margin:0 2px; }
+.btnAccion.editar { background:#0b4ea2; } .btnAccion.eliminar { background:#ff4d6d; }
+.btnAccion.prestar { background:#ffb703; color:#071033; } .btnAccion.devolver { background:#10b981; }
+.btnAccion.baja { background:#ff6b00; }
+
+footer { background:#071033; color:#9fbbe8; text-align:center; padding:10px; margin-top:18px; border-radius:6px; }
+
+@media (max-width:880px) {
+  .flyer { flex-direction:column; }
+  .inventario-actions { flex-direction:column; align-items:stretch; }
+  .inventario-buttons { justify-content:flex-start; flex-wrap:wrap; }
+}

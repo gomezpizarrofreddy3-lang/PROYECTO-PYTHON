@@ -1,0 +1,492 @@
+<html>
+<head>
+<title>proyecto.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #6aab73;}
+.s3 { color: #cf8e6d;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+proyecto.js</font>
+</center></td></tr></table>
+<pre><span class="s0">/** 
+ * proyecto.js  - SMARTINVENTORY 
+ * - Login 
+ * - CRUD 
+ * - PDF/CSV 
+ * - Dashboard 
+ * - Escaneo Simulado 
+ * - Alertas Automáticas EmailJS 
+ */</span>
+
+<span class="s1">document.addEventListener(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="s1">, () =&gt; {</span>
+  <span class="s1">const qs = s =&gt; document.querySelector(s);</span>
+  <span class="s1">const qsa = s =&gt; Array.from(document.querySelectorAll(s));</span>
+  <span class="s1">const toast = (icon, title) =&gt; {</span>
+    <span class="s3">if </span><span class="s1">(window.Swal)</span>
+      <span class="s1">Swal.fire({ toast:</span><span class="s3">true</span><span class="s1">, position:</span><span class="s2">&quot;top-end&quot;</span><span class="s1">, icon, title, showConfirmButton:</span><span class="s3">false</span><span class="s1">, timer:</span><span class="s4">1400 </span><span class="s1">});</span>
+    <span class="s3">else </span><span class="s1">console.log(icon, title);</span>
+  <span class="s1">};</span>
+
+  <span class="s0">/* ------------------------- 
+     LOGIN 
+  -------------------------*/</span>
+  <span class="s1">const formLogin = qs(</span><span class="s2">&quot;#loginForm&quot;</span><span class="s1">);</span>
+  <span class="s3">if </span><span class="s1">(formLogin) {</span>
+    <span class="s1">formLogin.addEventListener(</span><span class="s2">&quot;submit&quot;</span><span class="s1">, e =&gt; {</span>
+      <span class="s1">e.preventDefault();</span>
+      <span class="s1">const user = qs(</span><span class="s2">&quot;#usuario&quot;</span><span class="s1">).value.trim();</span>
+      <span class="s1">const pass = qs(</span><span class="s2">&quot;#password&quot;</span><span class="s1">).value.trim();</span>
+
+      <span class="s3">if </span><span class="s1">(!user || !pass)</span>
+        <span class="s3">return </span><span class="s1">Swal.fire(</span><span class="s2">&quot;Complete campos&quot;</span><span class="s1">,</span><span class="s2">&quot;Ingrese usuario y contraseña&quot;</span><span class="s1">,</span><span class="s2">&quot;warning&quot;</span><span class="s1">);</span>
+
+      <span class="s3">if </span><span class="s1">(user === </span><span class="s2">&quot;admin&quot; </span><span class="s1">&amp;&amp; pass === </span><span class="s2">&quot;1234&quot;</span><span class="s1">) {</span>
+        <span class="s1">localStorage.setItem(</span><span class="s2">&quot;sesionActiva&quot;</span><span class="s1">, </span><span class="s2">&quot;true&quot;</span><span class="s1">);</span>
+        <span class="s1">Swal.fire({ icon:</span><span class="s2">&quot;success&quot;</span><span class="s1">, title:</span><span class="s2">&quot;Bienvenido&quot;</span><span class="s1">, timer:</span><span class="s4">800</span><span class="s1">, showConfirmButton:</span><span class="s3">false </span><span class="s1">})</span>
+          <span class="s1">.then(() =&gt; window.location=</span><span class="s2">&quot;proyecto.html&quot;</span><span class="s1">);</span>
+      <span class="s1">} </span><span class="s3">else </span><span class="s1">{</span>
+        <span class="s1">Swal.fire(</span><span class="s2">&quot;Error&quot;</span><span class="s1">,</span><span class="s2">&quot;Usuario o contraseña incorrectos&quot;</span><span class="s1">,</span><span class="s2">&quot;error&quot;</span><span class="s1">);</span>
+      <span class="s1">}</span>
+    <span class="s1">});</span>
+    <span class="s3">return</span><span class="s1">;</span>
+  <span class="s1">}</span>
+
+  <span class="s3">if </span><span class="s1">(!localStorage.getItem(</span><span class="s2">&quot;sesionActiva&quot;</span><span class="s1">)) {</span>
+    <span class="s1">window.location = </span><span class="s2">&quot;index.html&quot;</span><span class="s1">;</span>
+    <span class="s3">return</span><span class="s1">;</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     SELECTORES 
+  -------------------------*/</span>
+  <span class="s1">const logoutBtn = qs(</span><span class="s2">&quot;#logoutBtn&quot;</span><span class="s1">);</span>
+  <span class="s1">const navLinks = qsa(</span><span class="s2">&quot;nav a&quot;</span><span class="s1">);</span>
+  <span class="s1">const sections = qsa(</span><span class="s2">&quot;main section&quot;</span><span class="s1">);</span>
+  <span class="s1">const inventoryForm = qs(</span><span class="s2">&quot;#inventoryForm&quot;</span><span class="s1">);</span>
+  <span class="s1">const codigoInput = qs(</span><span class="s2">&quot;#codigo&quot;</span><span class="s1">);</span>
+  <span class="s1">const nombreInput = qs(</span><span class="s2">&quot;#nombre&quot;</span><span class="s1">);</span>
+  <span class="s1">const stockInput = qs(</span><span class="s2">&quot;#stock&quot;</span><span class="s1">);</span>
+  <span class="s1">const categoriaInput = qs(</span><span class="s2">&quot;#categoria&quot;</span><span class="s1">);</span>
+  <span class="s1">const estadoInput = qs(</span><span class="s2">&quot;#estado&quot;</span><span class="s1">);</span>
+  <span class="s1">const ubicacionInput = qs(</span><span class="s2">&quot;#ubicacion&quot;</span><span class="s1">);</span>
+  <span class="s1">const encargadoInput = qs(</span><span class="s2">&quot;#encargado&quot;</span><span class="s1">);</span>
+  <span class="s1">const tablaBody = qs(</span><span class="s2">&quot;#tablaInventario tbody&quot;</span><span class="s1">);</span>
+  <span class="s1">const buscador = qs(</span><span class="s2">&quot;#buscador&quot;</span><span class="s1">);</span>
+  <span class="s1">const totalArticulosEl = qs(</span><span class="s2">&quot;#totalArticulos&quot;</span><span class="s1">);</span>
+  <span class="s1">const totalOperativosEl = qs(</span><span class="s2">&quot;#totalOperativos&quot;</span><span class="s1">);</span>
+  <span class="s1">const totalInoperativosEl = qs(</span><span class="s2">&quot;#totalInoperativos&quot;</span><span class="s1">);</span>
+  <span class="s1">const graficoCtx = qs(</span><span class="s2">&quot;#graficoInicio&quot;</span><span class="s1">);</span>
+  <span class="s1">const btnPDF = qs(</span><span class="s2">&quot;#btnPDF&quot;</span><span class="s1">);</span>
+  <span class="s1">const btnExportCSV = qs(</span><span class="s2">&quot;#btnExportCSV&quot;</span><span class="s1">);</span>
+  <span class="s1">const btnExportCSVReport = qs(</span><span class="s2">&quot;#btnExportCSVReport&quot;</span><span class="s1">);</span>
+  <span class="s1">const btnPDFReport = qs(</span><span class="s2">&quot;#btnPDFReport&quot;</span><span class="s1">);</span>
+  <span class="s1">const tablaReporteBody = qs(</span><span class="s2">&quot;#tablaReporte tbody&quot;</span><span class="s1">);</span>
+  <span class="s1">const btnScan = qs(</span><span class="s2">&quot;#btnScan&quot;</span><span class="s1">);</span>
+
+  <span class="s1">let chart = </span><span class="s3">null</span><span class="s1">;</span>
+
+  <span class="s0">// CONFIG</span>
+  <span class="s1">const ALERT_THRESHOLD = </span><span class="s4">5</span><span class="s1">;</span>
+  <span class="s1">const ALERT_INTERVAL_MIN = </span><span class="s4">5</span><span class="s1">;</span>
+  <span class="s1">const ALERT_REENVIAR_MIN = </span><span class="s4">60</span><span class="s1">;</span>
+
+  <span class="s0">/* ------------------------- 
+     STORAGE 
+  -------------------------*/</span>
+  <span class="s1">const leer = () =&gt; JSON.parse(localStorage.getItem(</span><span class="s2">&quot;inventario&quot;</span><span class="s1">) || </span><span class="s2">&quot;[]&quot;</span><span class="s1">);</span>
+  <span class="s1">const guardar = arr =&gt; localStorage.setItem(</span><span class="s2">&quot;inventario&quot;</span><span class="s1">, JSON.stringify(arr));</span>
+
+  <span class="s0">/* ------------------------- 
+     EmailJS CONFIG 
+  -------------------------*/</span>
+  <span class="s1">const ALERTS_KEY = </span><span class="s2">&quot;alerts_sent&quot;</span><span class="s1">;</span>
+
+  <span class="s3">function </span><span class="s1">registraAlertasMostradas(items) {</span>
+    <span class="s1">const sent = JSON.parse(localStorage.getItem(ALERTS_KEY) || </span><span class="s2">&quot;{}&quot;</span><span class="s1">);</span>
+    <span class="s1">const now = Date.now();</span>
+    <span class="s1">items.forEach(i =&gt; sent[i.codigo] = now);</span>
+    <span class="s1">localStorage.setItem(ALERTS_KEY, JSON.stringify(sent));</span>
+  <span class="s1">}</span>
+
+  <span class="s3">function </span><span class="s1">filtroAlertasNoEnviadas(items, minutos = ALERT_REENVIAR_MIN) {</span>
+    <span class="s1">const sent = JSON.parse(localStorage.getItem(ALERTS_KEY) || </span><span class="s2">&quot;{}&quot;</span><span class="s1">);</span>
+    <span class="s1">const now = Date.now();</span>
+    <span class="s3">return </span><span class="s1">items.filter(i =&gt; !sent[i.codigo] || now - sent[i.codigo] &gt; minutos * </span><span class="s4">60000</span><span class="s1">);</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     ENVÍO EMAILJS — MULTI CORREO 
+  -------------------------*/</span>
+  <span class="s1">async </span><span class="s3">function </span><span class="s1">enviarAlertaItemEmailJS(item) {</span>
+
+    <span class="s0">// 🔥 AGREGA TUS CORREOS AQUI</span>
+    <span class="s1">const correos = [</span>
+      <span class="s2">&quot;primer@gmail.com&quot;</span><span class="s1">,</span>
+      <span class="s2">&quot;segundo@gmail.com&quot;</span>
+    <span class="s1">];</span>
+
+    <span class="s1">const payload = {</span>
+      <span class="s1">nombre: item.nombre,</span>
+      <span class="s1">categoria: item.categoria || </span><span class="s2">&quot;&quot;</span><span class="s1">,</span>
+      <span class="s1">cantidad: String(item.stock || </span><span class="s4">0</span><span class="s1">),</span>
+      <span class="s1">fecha: </span><span class="s3">new </span><span class="s1">Date().toLocaleString(),</span>
+      <span class="s1">codigo: item.codigo || </span><span class="s2">&quot;&quot;</span><span class="s1">,</span>
+      <span class="s1">to_email: correos.join(</span><span class="s2">&quot;,&quot;</span><span class="s1">)</span>
+    <span class="s1">};</span>
+
+    <span class="s3">if </span><span class="s1">(window.emailjs) {</span>
+
+      <span class="s1">const SERVICE_ID = </span><span class="s2">&quot;service_v1tf8l8&quot;</span><span class="s1">;</span>
+      <span class="s1">const TEMPLATE_ID = </span><span class="s2">&quot;template_hvv4e4i&quot;</span><span class="s1">;</span>
+
+      <span class="s3">try </span><span class="s1">{</span>
+        <span class="s1">await emailjs.send(SERVICE_ID, TEMPLATE_ID, payload);</span>
+        <span class="s1">console.log(</span><span class="s2">&quot;📩 Email enviado a:&quot;</span><span class="s1">, correos.join(</span><span class="s2">&quot;, &quot;</span><span class="s1">));</span>
+      <span class="s1">} </span><span class="s3">catch </span><span class="s1">(err) {</span>
+        <span class="s1">console.error(</span><span class="s2">&quot;❌ Error EmailJS:&quot;</span><span class="s1">, err);</span>
+        <span class="s1">alert(</span><span class="s2">&quot;EmailJS ERROR: &quot; </span><span class="s1">+ JSON.stringify(err));</span>
+      <span class="s1">}</span>
+
+    <span class="s1">} </span><span class="s3">else </span><span class="s1">{</span>
+      <span class="s1">console.log(</span><span class="s2">&quot;EmailJS no cargó&quot;</span><span class="s1">);</span>
+    <span class="s1">}</span>
+  <span class="s1">}</span>
+
+  <span class="s1">async </span><span class="s3">function </span><span class="s1">enviarAlertas(items) {</span>
+    <span class="s1">const pendientes = filtroAlertasNoEnviadas(items);</span>
+    <span class="s3">if </span><span class="s1">(!pendientes.length) </span><span class="s3">return</span><span class="s1">;</span>
+
+    <span class="s3">for </span><span class="s1">(const it of pendientes) {</span>
+      <span class="s1">await enviarAlertaItemEmailJS(it);</span>
+    <span class="s1">}</span>
+    <span class="s1">registraAlertasMostradas(pendientes);</span>
+    <span class="s1">toast(</span><span class="s2">&quot;info&quot;</span><span class="s1">,</span><span class="s2">&quot;Alertas enviadas (revisa tu correo)&quot;</span><span class="s1">);</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     GENERAR CÓDIGO 
+  -------------------------*/</span>
+  <span class="s3">function </span><span class="s1">generarCodigo() {</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s1">let max = inv.reduce((a,it)=&gt;{</span>
+      <span class="s1">const m = (it.codigo || </span><span class="s2">&quot;&quot;</span><span class="s1">).match(/INV-(\d+)/);</span>
+      <span class="s3">return </span><span class="s1">m ? Math.max(a, Number(m[</span><span class="s4">1</span><span class="s1">])) : a;</span>
+    <span class="s1">}, </span><span class="s4">0</span><span class="s1">);</span>
+    <span class="s1">codigoInput.value = `INV-${String(max + </span><span class="s4">1</span><span class="s1">).padStart(</span><span class="s4">3</span><span class="s1">,</span><span class="s2">&quot;0&quot;</span><span class="s1">)}`;</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     TABLA 
+  -------------------------*/</span>
+  <span class="s3">function </span><span class="s1">renderTabla(filter=</span><span class="s2">&quot;&quot;</span><span class="s1">) {</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s1">const list = inv.filter(i =&gt; {</span>
+      <span class="s3">if </span><span class="s1">(!filter) </span><span class="s3">return true</span><span class="s1">;</span>
+      <span class="s1">const t = filter.toLowerCase();</span>
+      <span class="s3">return </span><span class="s1">[i.nombre, i.codigo, i.categoria, i.ubicacion, i.encargado]</span>
+             <span class="s1">.some(v =&gt; (v || </span><span class="s2">&quot;&quot;</span><span class="s1">).toLowerCase().includes(t));</span>
+    <span class="s1">});</span>
+
+    <span class="s1">tablaBody.innerHTML = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+    <span class="s1">list.forEach((i, idx) =&gt; {</span>
+      <span class="s1">tablaBody.innerHTML += `</span>
+        <span class="s1">&lt;tr&gt;</span>
+          <span class="s1">&lt;td&gt;${i.codigo}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.nombre}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.stock}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.categoria}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.estado}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.ubicacion}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.encargado}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;</span>
+            <span class="s1">&lt;button class=</span><span class="s2">&quot;btnAccion editar&quot; </span><span class="s1">data-i=</span><span class="s2">&quot;${idx}&quot;</span><span class="s1">&gt;</span>
+              <span class="s1">&lt;i class=</span><span class="s2">&quot;fa-solid fa-pen&quot;</span><span class="s1">&gt;&lt;/i&gt;</span>
+            <span class="s1">&lt;/button&gt;</span>
+            <span class="s1">&lt;button class=</span><span class="s2">&quot;btnAccion eliminar&quot; </span><span class="s1">data-i=</span><span class="s2">&quot;${idx}&quot;</span><span class="s1">&gt;</span>
+              <span class="s1">&lt;i class=</span><span class="s2">&quot;fa-solid fa-trash&quot;</span><span class="s1">&gt;&lt;/i&gt;</span>
+            <span class="s1">&lt;/button&gt;</span>
+          <span class="s1">&lt;/td&gt;</span>
+        <span class="s1">&lt;/tr&gt;</span>
+      <span class="s1">`;</span>
+    <span class="s1">});</span>
+
+    <span class="s1">qsa(</span><span class="s2">&quot;.editar&quot;</span><span class="s1">).forEach(b =&gt; b.onclick = onEdit);</span>
+    <span class="s1">qsa(</span><span class="s2">&quot;.eliminar&quot;</span><span class="s1">).forEach(b =&gt; b.onclick = onDelete);</span>
+
+    <span class="s1">actualizarResumenYGrafico();</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     CRUD 
+  -------------------------*/</span>
+  <span class="s3">function </span><span class="s1">onDelete(e) {</span>
+    <span class="s1">const i = Number(e.currentTarget.dataset.i);</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s1">const item = inv[i];</span>
+    <span class="s1">Swal.fire({ title:`Eliminar ${item.nombre}?`, showCancelButton:</span><span class="s3">true </span><span class="s1">})</span>
+      <span class="s1">.then(r =&gt; {</span>
+        <span class="s3">if </span><span class="s1">(r.isConfirmed) {</span>
+          <span class="s1">inv.splice(i,</span><span class="s4">1</span><span class="s1">);</span>
+          <span class="s1">guardar(inv);</span>
+          <span class="s1">renderTabla();</span>
+          <span class="s1">toast(</span><span class="s2">&quot;success&quot;</span><span class="s1">,</span><span class="s2">&quot;Eliminado&quot;</span><span class="s1">);</span>
+        <span class="s1">}</span>
+      <span class="s1">});</span>
+  <span class="s1">}</span>
+
+  <span class="s3">function </span><span class="s1">onEdit(e) {</span>
+    <span class="s1">const i = Number(e.currentTarget.dataset.i);</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s1">const it = inv[i];</span>
+
+    <span class="s1">codigoInput.value = it.codigo;</span>
+    <span class="s1">nombreInput.value = it.nombre;</span>
+    <span class="s1">stockInput.value = it.stock;</span>
+    <span class="s1">categoriaInput.value = it.categoria;</span>
+    <span class="s1">estadoInput.value = it.estado;</span>
+    <span class="s1">ubicacionInput.value = it.ubicacion;</span>
+    <span class="s1">encargadoInput.value = it.encargado;</span>
+
+    <span class="s1">inv.splice(i,</span><span class="s4">1</span><span class="s1">);</span>
+    <span class="s1">guardar(inv);</span>
+    <span class="s1">renderTabla();</span>
+    <span class="s1">toast(</span><span class="s2">&quot;info&quot;</span><span class="s1">,</span><span class="s2">&quot;Edita y guarda&quot;</span><span class="s1">);</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     GUARDAR 
+  -------------------------*/</span>
+  <span class="s3">if </span><span class="s1">(inventoryForm) {</span>
+    <span class="s1">inventoryForm.addEventListener(</span><span class="s2">&quot;submit&quot;</span><span class="s1">, e =&gt; {</span>
+      <span class="s1">e.preventDefault();</span>
+
+      <span class="s1">const inv = leer();</span>
+      <span class="s1">const nuevo = {</span>
+        <span class="s1">codigo: codigoInput.value,</span>
+        <span class="s1">nombre: nombreInput.value.trim(),</span>
+        <span class="s1">stock: Number(stockInput.value),</span>
+        <span class="s1">categoria: categoriaInput.value.trim(),</span>
+        <span class="s1">estado: estadoInput.value.trim(),</span>
+        <span class="s1">ubicacion: ubicacionInput.value.trim(),</span>
+        <span class="s1">encargado: encargadoInput.value.trim()</span>
+      <span class="s1">};</span>
+
+      <span class="s1">inv.push(nuevo);</span>
+      <span class="s1">guardar(inv);</span>
+
+      <span class="s1">inventoryForm.reset();</span>
+      <span class="s1">generarCodigo();</span>
+      <span class="s1">renderTabla(buscador.value.trim());</span>
+      <span class="s1">toast(</span><span class="s2">&quot;success&quot;</span><span class="s1">,</span><span class="s2">&quot;Artículo guardado&quot;</span><span class="s1">);</span>
+
+      <span class="s3">if </span><span class="s1">(nuevo.stock &lt; ALERT_THRESHOLD) {</span>
+        <span class="s1">enviarAlertas([nuevo]);</span>
+      <span class="s1">}</span>
+    <span class="s1">});</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     BUSCADOR 
+  -------------------------*/</span>
+  <span class="s1">buscador.addEventListener(</span><span class="s2">&quot;input&quot;</span><span class="s1">, () =&gt; {</span>
+    <span class="s1">renderTabla(buscador.value.trim());</span>
+  <span class="s1">});</span>
+
+  <span class="s0">/* ------------------------- 
+     EXPORT CSV / PDF 
+  -------------------------*/</span>
+  <span class="s3">function </span><span class="s1">exportToCSV(filename) {</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s3">if </span><span class="s1">(!inv.length) </span><span class="s3">return </span><span class="s1">Swal.fire(</span><span class="s2">&quot;No hay datos&quot;</span><span class="s1">);</span>
+
+    <span class="s1">const header = [</span><span class="s2">&quot;Código&quot;</span><span class="s1">,</span><span class="s2">&quot;Nombre&quot;</span><span class="s1">,</span><span class="s2">&quot;Stock&quot;</span><span class="s1">,</span><span class="s2">&quot;Categoría&quot;</span><span class="s1">,</span><span class="s2">&quot;Estado&quot;</span><span class="s1">,</span><span class="s2">&quot;Ubicación&quot;</span><span class="s1">,</span><span class="s2">&quot;Encargado&quot;</span><span class="s1">];</span>
+    <span class="s1">const rows = [header, ...inv.map(i=&gt;[</span>
+      <span class="s1">i.codigo,i.nombre,i.stock,i.categoria,i.estado,i.ubicacion,i.encargado</span>
+    <span class="s1">])];</span>
+
+    <span class="s1">const csv = rows.map(r=&gt;r.join(</span><span class="s2">&quot;,&quot;</span><span class="s1">)).join(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">&quot;</span><span class="s1">);</span>
+    <span class="s1">const blob = </span><span class="s3">new </span><span class="s1">Blob([csv],{type:</span><span class="s2">&quot;text/csv&quot;</span><span class="s1">});</span>
+    <span class="s1">const link = document.createElement(</span><span class="s2">&quot;a&quot;</span><span class="s1">);</span>
+    <span class="s1">link.href = URL.createObjectURL(blob);</span>
+    <span class="s1">link.download = filename;</span>
+    <span class="s1">link.click();</span>
+  <span class="s1">}</span>
+
+  <span class="s1">btnExportCSV &amp;&amp; btnExportCSV.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s1">,()=&gt;exportToCSV(</span><span class="s2">&quot;inventario.csv&quot;</span><span class="s1">));</span>
+  <span class="s1">btnExportCSVReport &amp;&amp; btnExportCSVReport.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s1">,()=&gt;exportToCSV(</span><span class="s2">&quot;reporte.csv&quot;</span><span class="s1">));</span>
+
+  <span class="s1">const generarPDF = () =&gt; {</span>
+    <span class="s3">try</span><span class="s1">{</span>
+      <span class="s1">const { jsPDF } = window.jspdf;</span>
+      <span class="s1">const doc = </span><span class="s3">new </span><span class="s1">jsPDF();</span>
+      <span class="s1">doc.text(</span><span class="s2">&quot;SMARTINVENTORY - Reporte&quot;</span><span class="s1">,</span><span class="s4">20</span><span class="s1">,</span><span class="s4">20</span><span class="s1">);</span>
+
+      <span class="s1">const inv = leer();</span>
+      <span class="s1">const body = inv.map(i=&gt;[</span>
+        <span class="s1">i.codigo,i.nombre,i.stock,i.categoria,i.estado,i.ubicacion,i.encargado</span>
+      <span class="s1">]);</span>
+
+      <span class="s1">doc.autoTable({</span>
+        <span class="s1">startY:</span><span class="s4">40</span><span class="s1">,</span>
+        <span class="s1">head:[[</span><span class="s2">&quot;Código&quot;</span><span class="s1">,</span><span class="s2">&quot;Nombre&quot;</span><span class="s1">,</span><span class="s2">&quot;Stock&quot;</span><span class="s1">,</span><span class="s2">&quot;Categoría&quot;</span><span class="s1">,</span><span class="s2">&quot;Estado&quot;</span><span class="s1">,</span><span class="s2">&quot;Ubicación&quot;</span><span class="s1">,</span><span class="s2">&quot;Encargado&quot;</span><span class="s1">]],</span>
+        <span class="s1">body</span>
+      <span class="s1">});</span>
+      <span class="s1">doc.save(</span><span class="s2">&quot;reporte.pdf&quot;</span><span class="s1">);</span>
+    <span class="s1">}</span><span class="s3">catch</span><span class="s1">(e){ Swal.fire(</span><span class="s2">&quot;Error jsPDF&quot;</span><span class="s1">); }</span>
+  <span class="s1">};</span>
+  <span class="s1">btnPDF &amp;&amp; btnPDF.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s1">,generarPDF);</span>
+  <span class="s1">btnPDFReport &amp;&amp; btnPDFReport.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s1">,generarPDF);</span>
+
+  <span class="s0">/* ------------------------- 
+     DASHBOARD 
+  -------------------------*/</span>
+  <span class="s3">function </span><span class="s1">actualizarResumenYGrafico() {</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s1">const oper = inv.filter(i=&gt;i.estado===</span><span class="s2">&quot;Operativo&quot;</span><span class="s1">).length;</span>
+    <span class="s1">const inop = inv.filter(i=&gt;i.estado===</span><span class="s2">&quot;Inoperativo&quot;</span><span class="s1">).length;</span>
+
+    <span class="s1">totalArticulosEl.textContent = inv.length;</span>
+    <span class="s1">totalOperativosEl.textContent = oper;</span>
+    <span class="s1">totalInoperativosEl.textContent = inop;</span>
+
+    <span class="s3">if </span><span class="s1">(!graficoCtx) </span><span class="s3">return</span><span class="s1">;</span>
+
+    <span class="s1">const ctx = graficoCtx.getContext(</span><span class="s2">&quot;2d&quot;</span><span class="s1">);</span>
+    <span class="s3">if </span><span class="s1">(chart) chart.destroy();</span>
+
+    <span class="s1">chart = </span><span class="s3">new </span><span class="s1">Chart(ctx,{</span>
+      <span class="s1">type:</span><span class="s2">&quot;doughnut&quot;</span><span class="s1">,</span>
+      <span class="s1">data:{</span>
+        <span class="s1">labels:[</span><span class="s2">&quot;Operativos&quot;</span><span class="s1">,</span><span class="s2">&quot;Inoperativos&quot;</span><span class="s1">],</span>
+        <span class="s1">datasets:[{data:[oper,inop]}]</span>
+      <span class="s1">},</span>
+      <span class="s1">options:{responsive:</span><span class="s3">true</span><span class="s1">}</span>
+    <span class="s1">});</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     REPORTES 
+  -------------------------*/</span>
+  <span class="s3">function </span><span class="s1">cargarReporte() {</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s1">tablaReporteBody.innerHTML = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+    <span class="s1">inv.forEach(i =&gt; {</span>
+      <span class="s1">tablaReporteBody.innerHTML += `</span>
+        <span class="s1">&lt;tr&gt;</span>
+          <span class="s1">&lt;td&gt;${i.codigo}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.nombre}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.categoria}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.estado}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.ubicacion}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.encargado}&lt;/td&gt;</span>
+          <span class="s1">&lt;td&gt;${i.stock}&lt;/td&gt;</span>
+        <span class="s1">&lt;/tr&gt;`;</span>
+    <span class="s1">});</span>
+  <span class="s1">}</span>
+
+  <span class="s0">/* ------------------------- 
+     LOGOUT 
+  -------------------------*/</span>
+  <span class="s1">logoutBtn.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s1">,()=&gt;{</span>
+    <span class="s1">Swal.fire({title:</span><span class="s2">&quot;¿Cerrar sesión?&quot;</span><span class="s1">,showCancelButton:</span><span class="s3">true</span><span class="s1">}).then(r=&gt;{</span>
+      <span class="s3">if</span><span class="s1">(r.isConfirmed){</span>
+        <span class="s1">localStorage.removeItem(</span><span class="s2">&quot;sesionActiva&quot;</span><span class="s1">);</span>
+        <span class="s1">window.location=</span><span class="s2">&quot;index.html&quot;</span><span class="s1">;</span>
+      <span class="s1">}</span>
+    <span class="s1">});</span>
+  <span class="s1">});</span>
+
+  <span class="s0">/* ------------------------- 
+     NAVEGACIÓN 
+  -------------------------*/</span>
+  <span class="s1">navLinks.forEach(a =&gt; a.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s1">, ev =&gt; {</span>
+    <span class="s1">ev.preventDefault();</span>
+
+    <span class="s1">navLinks.forEach(x =&gt; x.classList.remove(</span><span class="s2">&quot;activo&quot;</span><span class="s1">));</span>
+    <span class="s1">a.classList.add(</span><span class="s2">&quot;activo&quot;</span><span class="s1">);</span>
+
+    <span class="s1">const sec = qs(a.getAttribute(</span><span class="s2">&quot;href&quot;</span><span class="s1">));</span>
+    <span class="s1">sections.forEach(s =&gt; s.style.display=</span><span class="s2">&quot;none&quot;</span><span class="s1">);</span>
+
+    <span class="s1">sec.style.display=</span><span class="s2">&quot;block&quot;</span><span class="s1">;</span>
+
+    <span class="s3">if </span><span class="s1">(sec.id===</span><span class="s2">&quot;inventario&quot;</span><span class="s1">){ generarCodigo(); renderTabla(); }</span>
+    <span class="s3">if </span><span class="s1">(sec.id===</span><span class="s2">&quot;reportes&quot;</span><span class="s1">){ cargarReporte(); }</span>
+  <span class="s1">}));</span>
+
+  <span class="s0">/* ------------------------- 
+     ALERTAS AUTOMÁTICAS 
+  -------------------------*/</span>
+  <span class="s1">async </span><span class="s3">function </span><span class="s1">verificarStock() {</span>
+    <span class="s1">const inv = leer();</span>
+    <span class="s1">const bajos = inv.filter(i =&gt; i.stock &lt; ALERT_THRESHOLD);</span>
+
+    <span class="s3">if </span><span class="s1">(!bajos.length) </span><span class="s3">return</span><span class="s1">;</span>
+
+    <span class="s1">Swal.fire({</span>
+      <span class="s1">icon:</span><span class="s2">&quot;warning&quot;</span><span class="s1">,</span>
+      <span class="s1">title:</span><span class="s2">&quot;Stock bajo&quot;</span><span class="s1">,</span>
+      <span class="s1">html: bajos.map(b =&gt; `${b.codigo} — ${b.nombre} (${b.stock})`).join(</span><span class="s2">&quot;&lt;br&gt;&quot;</span><span class="s1">)</span>
+    <span class="s1">});</span>
+
+    <span class="s1">await enviarAlertas(bajos);</span>
+  <span class="s1">}</span>
+
+  <span class="s1">setInterval(() =&gt; verificarStock(), ALERT_INTERVAL_MIN * </span><span class="s4">60000</span><span class="s1">);</span>
+
+  <span class="s0">/* ------------------------- 
+     ESCANEO 
+  -------------------------*/</span>
+  <span class="s1">btnScan.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s1">, () =&gt; {</span>
+    <span class="s1">Swal.fire({title:</span><span class="s2">&quot;Simular Escaneo&quot;</span><span class="s1">,input:</span><span class="s2">&quot;text&quot;</span><span class="s1">,showCancelButton:</span><span class="s3">true</span><span class="s1">}).then(r=&gt;{</span>
+      <span class="s3">if </span><span class="s1">(!r.isConfirmed) </span><span class="s3">return</span><span class="s1">;</span>
+
+      <span class="s1">const code = r.value.trim();</span>
+      <span class="s1">const inv = leer();</span>
+      <span class="s1">const found = inv.find(x =&gt; x.codigo === code);</span>
+
+      <span class="s3">if </span><span class="s1">(found) {</span>
+        <span class="s1">codigoInput.value = found.codigo;</span>
+        <span class="s1">nombreInput.value = found.nombre;</span>
+        <span class="s1">stockInput.value = found.stock;</span>
+        <span class="s1">categoriaInput.value = found.categoria;</span>
+        <span class="s1">estadoInput.value = found.estado;</span>
+        <span class="s1">ubicacionInput.value = found.ubicacion;</span>
+        <span class="s1">encargadoInput.value = found.encargado;</span>
+        <span class="s1">Swal.fire(</span><span class="s2">&quot;Encontrado&quot;</span><span class="s1">, found.nombre, </span><span class="s2">&quot;success&quot;</span><span class="s1">);</span>
+      <span class="s1">} </span><span class="s3">else </span><span class="s1">{</span>
+        <span class="s1">Swal.fire({title:</span><span class="s2">&quot;No existe&quot;</span><span class="s1">,text:`¿Crear ${code}?`,showCancelButton:</span><span class="s3">true</span><span class="s1">})</span>
+          <span class="s1">.then(x=&gt;{</span>
+            <span class="s3">if </span><span class="s1">(x.isConfirmed){</span>
+              <span class="s1">codigoInput.value = code;</span>
+              <span class="s1">nombreInput.value = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+              <span class="s1">stockInput.value = </span><span class="s2">&quot;0&quot;</span><span class="s1">;</span>
+              <span class="s1">categoriaInput.value = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+              <span class="s1">estadoInput.value = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+              <span class="s1">ubicacionInput.value = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+              <span class="s1">encargadoInput.value = </span><span class="s2">&quot;&quot;</span><span class="s1">;</span>
+              <span class="s1">Swal.fire(</span><span class="s2">&quot;Complete datos y guarde&quot;</span><span class="s1">);</span>
+            <span class="s1">}</span>
+          <span class="s1">});</span>
+      <span class="s1">}</span>
+    <span class="s1">});</span>
+  <span class="s1">});</span>
+
+  <span class="s0">/* ------------------------- 
+     INICIO 
+  -------------------------*/</span>
+  <span class="s1">generarCodigo();</span>
+  <span class="s1">renderTabla();</span>
+  <span class="s1">actualizarResumenYGrafico();</span>
+<span class="s1">});</span>
+</pre>
+</body>
+</html>
